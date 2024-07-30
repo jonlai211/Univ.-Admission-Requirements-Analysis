@@ -1,0 +1,96 @@
+{
+  "selection_process_and_criteria": {
+    "selection_process": {
+      "overview": "Harvard considers each application with care. We look at the whole person behind the numbers, including academic achievements, extracurricular activities, personal qualities, and life experiences. There is no typical Harvard student or ideal Harvard applicant."
+    },
+    "selection_criteria": {
+      "overview": "Academic accomplishment is important, but the Admissions Committee also considers many other factors, such as community involvement, leadership, extracurricular activities, personal qualities and character. We rely on teachers, counselors, and alumni to share information about an applicant's strength of character, ability to overcome adversity, and other personal qualities.",
+      "factors_considered": [
+        "Academic accomplishment",
+        "Community involvement",
+        "Leadership",
+        "Extracurricular activities",
+        "Personal qualities and character",
+        "Ability to overcome adversity"
+      ]
+    }
+  },
+  "admission_requirements": {
+    "university_level": {
+      "overview": "All first-year applicants must complete the Common Application or Coalition Application, along with required supplements.",
+      "GPA_requirement": {
+        "guidelines": "There are no score cutoffs, and Harvard does not admit 'by the numbers'. The Admissions Committee takes into account your educational background when reviewing your scores.",
+        "general_requirement": "Academic accomplishment in high school is important, but there is no specific GPA requirement."
+      },
+      "English_proficiency_requirements": [
+        {
+          "test_name": "TOEFL/IELTS",
+          "guidelines": "A strong knowledge of English is essential for successful study at Harvard, including the ability to understand and express thoughts quickly and clearly.",
+          "is_required": "No",
+          "general_requirement": "First-year applicants are not required to take an English proficiency exam, but may submit scores if they wish to do so.",
+          "waive_conditions": "Not applicable as the test is not required"
+        }
+      ],
+      "application_fee": {
+        "overview": "The application fee is $85, but fee waivers are available.",
+        "value": "$85"
+      },
+      "application_materials": [
+        {
+          "material_name": "Common Application or Coalition Application",
+          "guidelines": "Must be completed and submitted online",
+          "detailed_requirement": "Includes personal essay, activities list, and other required sections"
+        },
+        {
+          "material_name": "Harvard College Questions Supplement",
+          "guidelines": "Must be completed in addition to main application",
+          "detailed_requirement": "Includes five required short-answer questions with 200 word limits for each"
+        },
+        {
+          "material_name": "School Report and High School Transcript",
+          "guidelines": "Must be submitted by school counselor",
+          "detailed_requirement": "Includes counselor letter and official transcript"
+        },
+        {
+          "material_name": "Teacher Recommendations",
+          "guidelines": "Two required",
+          "detailed_requirement": "Should be from teachers in different academic subjects who know you well"
+        },
+        {
+          "material_name": "Midyear School Report",
+          "guidelines": "Required after first semester grades are available",
+          "detailed_requirement": "Must be completed by school counselor or official"
+        },
+        {
+          "material_name": "Standardized Test Scores",
+          "guidelines": "SAT or ACT required",
+          "detailed_requirement": "Students may self-report scores. Official scores required only if admitted and enrolling."
+        }
+      ],
+      "prerequisite_courses": [],
+      "other_requirements": [
+        "Final School Report (for admitted students only)"
+      ]
+    },
+    "school_college_level": {}
+  },
+  "application_deadlines": {
+    "early_application": {
+      "intro": "Harvard offers a Restrictive Early Action program with a deadline of November 1. Applicants are notified by mid-December.",
+      "actions_after_admission": "Restrictive Early Action is non-binding. Admitted students have until May 1 to decide whether to attend."
+    },
+    "deadlines_by_type": [
+      {
+        "type": "Restrictive Early Action",
+        "deadline": "November 1",
+        "notification_date": "Mid-December"
+      },
+      {
+        "type": "Regular Decision",
+        "deadline": "January 1",
+        "notification_date": "End of March"
+      }
+    ],
+    "relevant_links": []
+  }
+}
