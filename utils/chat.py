@@ -30,7 +30,7 @@ async def chat(prompt, content, model=GEMINI_MODEL):
         response = await CLIENT.chat.completions.create(
             model=model,
             messages=messages,
-            temperature=0.6,
+            temperature=0,
             stream=True
         )
         final = ''

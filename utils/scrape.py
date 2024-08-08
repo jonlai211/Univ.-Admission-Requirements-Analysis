@@ -5,7 +5,11 @@ import re
 from pathlib import Path
 from bs4 import BeautifulSoup
 import xml.etree.ElementTree as ET
-from .chat import chat
+
+try:
+    from .chat import chat
+except ImportError:
+    from chat import chat
 
 
 def load_links(filename):
@@ -50,12 +54,20 @@ def parse_links(xml_data):
         return []
 
 
-async def check_consistent(text_content, requirement):
+async def check_consistent(text_content, univ_name, question_name):
     prompt_check_consistent = f"""
-    根据以下网站文本内容，判断是否包含以下学校和问题的要求：{requirement}。请简单回答"是"或"否"并简短解释您的判断理由。不要输出任何符号。
+    请阅读以下网页内容，并进行以下判断：
+    1. 确认内容是否属于{univ_name}。
+    2. 检查内容是否是为first-year applicant或者undergraduate相关的内容。
+    3. 评估内容是否包含{question_name}。
+    4. 确认网页的主体内容里没有标记该信息为已过时或存档（比如'archived'或'outdated'）。
+    
+    基于以上标准，如果内容满足上述所有的要求，则返回'是'；如果不符合其中任意一个要求，则返回'否'。同时提供简短的解释说明做出判断的理由。不要输出任何符号。
+    网页内容如下：
     {text_content}
     """
     response = await chat(prompt_check_consistent, ' ')
+    print(response)
     result, explanation = parse_result(response)
     print(f"Consistent: {result}. Explanation: {explanation}")
 
@@ -64,13 +76,13 @@ async def check_consistent(text_content, requirement):
 
 def parse_result(response):
     try:
-        match = re.match(r"(是|否)\s*(.*)", response.strip())
+        match = re.match(r"(是|否)\s*(.+)", response.strip(), re.DOTALL)
         if not match:
             # If no match, raise an exception
             raise ValueError(f"Parsing failed, response: {response}.")
 
         decision = "Yes" if match.group(1) == "是" else "No"
-        explanation = match.group(2).strip()
+        explanation = match.group(2).strip().replace('\n', ' ')
         return decision, explanation
 
     except Exception as e:
@@ -137,7 +149,7 @@ def clean_html(html_content):
 
 
 async def main():
-    identifier = 1
+    identifier = 6
 
     if identifier == 1:
         univ_name = "Massachusetts Institute of Technology"
@@ -246,13 +258,22 @@ For more information, visit
 mitadmissions.org
 .
         """
-        requirement = "MIT, undergraduate admission requirements selection criteria selection process"
-        consistent, explanation = await check_consistent(text_content, requirement)
+        univ_name = "Massachusetts Institute of Technology"
+        question_name = "undergraduate admission requirements (selection criteria or selection process)"
+        consistent, explanation = await check_consistent(text_content, univ_name, question_name)
     elif identifier == 5:
         html_content = load_html('mit_2')
         text = clean_html(html_content)
-        requirement = "MIT, undergraduate admission requirements selection criteria selection process"
-        consistent, explanation = await check_consistent(text, requirement)
+        univ_name = "Massachusetts Institute of Technology"
+        question_name = "undergraduate admission requirements (selection criteria or selection process)"
+        consistent, explanation = await check_consistent(text, univ_name, question_name)
+    elif identifier == 6:
+        html_content = await crawl_webpage("https://architecture.mit.edu/undergraduate-admissions")
+        text = clean_html(html_content)
+        # univ_name = "Massachusetts Institute of Technology, Major computer science"
+        univ_name = "Massachusetts Institute of Technology"
+        question_name = "undergraduate admission requirements (selection criteria or selection process)"
+        consistent, explanation = await check_consistent(text, univ_name, question_name)
 
 
 if __name__ == '__main__':
