@@ -1,9 +1,9 @@
+import argparse
 import asyncio
 import logging
 from pathlib import Path
 from utils import chat, load_links, check_official, crawl_webpage, clean_html, check_consistent, gen_query, \
     search, save_json, save_csv
-
 
 # Configure logging
 log_directory = Path(__file__).resolve().parent / 'logs'
@@ -17,11 +17,17 @@ logging.basicConfig(level=logging.DEBUG,  # Change to DEBUG to see all messages
 
 logging.info("Logging system initialized")
 
-univ = "mit"
-question = "stats"
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='Process university and question information.')
+    parser.add_argument('--univ', default='mit')
+    parser.add_argument('--question', default='select')
+
+    args = parser.parse_args()
+    return args.univ, args.question
 
 
-async def main():
+async def main(univ, question):
     query, univ_name, question_name = gen_query(univ, question)
     results = await search(query)
     filename = f"{univ}_{question}"
@@ -30,6 +36,7 @@ async def main():
     search_links = load_links(filename)
     logging.info(f"Num: {len(search_links)}; Search links: {search_links}")
     official_links = await check_official(univ_name, search_links)
+    logging.info(f"Num: {len(official_links)}; Official links: {official_links}")
 
     valid_links = []
 
@@ -54,4 +61,5 @@ async def main():
 
 
 if __name__ == '__main__':
-    asyncio.run(main(), debug=True)
+    univ, question = parse_arguments()
+    asyncio.run(main(univ, question), debug=True)
