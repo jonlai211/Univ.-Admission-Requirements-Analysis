@@ -1,4 +1,5 @@
 import asyncio
+import csv
 import httpx
 import json
 import re
@@ -21,10 +22,10 @@ def load_links(filename):
             links = [item['link'] for item in data if 'link' in item]
             return links
     except FileNotFoundError:
-        print(f"{file_path} was not found.")
+        # print(f"{file_path} was not found.")
         return []
     except json.JSONDecodeError:
-        print("Error decoding JSON.")
+        # print("Error decoding JSON.")
         return []
 
 
@@ -39,7 +40,7 @@ async def check_official(univ_name, search_links):
     """
     response = await chat(prompt_check_official, ' ')
     official_links = parse_links(response)
-    print(f'Num: {len(official_links)}; Official links: {official_links}')
+    # print(f'Num: {len(official_links)}; Official links: {official_links}')
 
     return official_links
 
@@ -50,7 +51,7 @@ def parse_links(xml_data):
         links = [link.text for link in root.findall('.//link')]
         return links
     except ET.ParseError as e:
-        print(f"Error parsing XML: {e}\n XML data: {xml_data}")
+        # print(f"Error parsing XML: {e}\n XML data: {xml_data}")
         return []
 
 
@@ -67,9 +68,9 @@ async def check_consistent(text_content, univ_name, question_name):
     {text_content}
     """
     response = await chat(prompt_check_consistent, ' ')
-    print(response)
+    # print(response)
     result, explanation = parse_result(response)
-    print(f"Consistent: {result}. Explanation: {explanation}")
+    # print(f"Consistent: {result}. Explanation: {explanation}")
 
     return result, explanation
 
@@ -86,7 +87,7 @@ def parse_result(response):
         return decision, explanation
 
     except Exception as e:
-        print(f"Error occurred: {e}")
+        # print(f"Error occurred: {e}")
         return "No", "Parsing failed, the response format is incorrect."
 
 
@@ -148,12 +149,22 @@ def clean_html(html_content):
     return text
 
 
+def save_csv(univ, question, valid_links):
+    project_root = Path(__file__).parent.parent
+    file_path = project_root / 'output' / 'task_1.csv'
+    file_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(file_path, 'a', newline='', encoding='utf-8') as csvfile:
+        link_writer = csv.writer(csvfile)
+        for index, link in enumerate(valid_links):
+            link_writer.writerow([index, univ, question, link])
+
+
 async def main():
-    identifier = 6
+    identifier = 3
 
     if identifier == 1:
         univ_name = "Massachusetts Institute of Technology"
-        search_links = load_links("mit_4")
+        search_links = load_links("mit_select")
         official_links = await check_official(univ_name, search_links)
     elif identifier == 2:
         links = load_links("mit_1")
@@ -268,7 +279,7 @@ mitadmissions.org
         question_name = "undergraduate admission requirements (selection criteria or selection process)"
         consistent, explanation = await check_consistent(text, univ_name, question_name)
     elif identifier == 6:
-        html_content = await crawl_webpage("https://architecture.mit.edu/undergraduate-admissions")
+        html_content = await crawl_webpage("https://catalog.mit.edu/mit/undergraduate-education/admissions/")
         text = clean_html(html_content)
         # univ_name = "Massachusetts Institute of Technology, Major computer science"
         univ_name = "Massachusetts Institute of Technology"

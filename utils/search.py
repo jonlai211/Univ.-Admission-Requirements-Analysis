@@ -23,11 +23,12 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 def gen_query(univ_abbr, question_abbr):
     univ_name = MAP_UNIV[univ_abbr]
     question_name = MAP_QUESTION[question_abbr]
-    query = f"{univ_name}:{question_name}"
+    query = f"{univ_name} {question_name}"
     return query, univ_name, question_name
 
 
-async def fetch_search(query, api_key=GOOGLE_KEY, search_engine_id=GOOGLE_ENGINE_ID, proxies=PROXY_SETTINGS, max_results=100):
+async def fetch_search(query, api_key=GOOGLE_KEY, search_engine_id=GOOGLE_ENGINE_ID, proxies=PROXY_SETTINGS,
+                       max_results=1):
     accumulated_results = []
     google_search_api_url = 'https://www.googleapis.com/customsearch/v1'
     total_results_fetched = 0
@@ -65,6 +66,31 @@ async def fetch_search(query, api_key=GOOGLE_KEY, search_engine_id=GOOGLE_ENGINE
     return accumulated_results
 
 
+async def search(base_query):
+    final_results = []
+    unique_links = set()
+
+    queries_set = [
+        (base_query, 10),
+        (f"{base_query} for international student", 10),
+        (f"{base_query} for Chinese student", 10)
+    ]
+
+    for query, max_results in queries_set:
+        # print(query)
+        current_results = await fetch_search(query, max_results=max_results)
+        # final_results.extend(current_results)
+        for result in current_results:
+            link = result['link']
+            if link.endswith('.pdf'):
+                continue
+            if link not in unique_links:
+                unique_links.add(link)
+                final_results.append(result)
+
+    return final_results
+
+
 def save_json(search_results, filename):
     project_root = Path(__file__).parent.parent
     file_path = project_root / 'output' / 'search' / f'{filename}.json'
@@ -80,8 +106,9 @@ async def main():
     university_abbr = "mit"
     question_abbr = "select"
 
-    query_text = gen_query(university_abbr, question_abbr)
-    results = await fetch_search(query_text, max_results=10)
+    query_text, univ_name, question_name = gen_query(university_abbr, question_abbr)
+    # print(query_text)
+    results = await search(query_text)
     filename = f'{university_abbr}_{question_abbr}'
     save_json(results, filename)
 
