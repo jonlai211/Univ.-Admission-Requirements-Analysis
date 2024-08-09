@@ -5,16 +5,15 @@ from pathlib import Path
 from utils import chat, load_links, check_official, crawl_webpage, clean_html, check_consistent, gen_query, \
     search, save_json, save_csv
 
-# Configure logging
 log_directory = Path(__file__).resolve().parent / 'logs'
 log_directory.mkdir(parents=True, exist_ok=True)  # Ensure directory exists
-logging.basicConfig(level=logging.DEBUG,  # Change to DEBUG to see all messages
+logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(message)s',
                     handlers=[
                         logging.FileHandler(log_directory / 'task_1.log'),
                         logging.StreamHandler()
                     ])
-
+logging.getLogger("httpx").setLevel(logging.WARNING)
 logging.info("Logging system initialized")
 
 
