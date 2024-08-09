@@ -5,16 +5,31 @@ from pathlib import Path
 from utils import chat, load_links, check_official, crawl_webpage, clean_html, check_consistent, gen_query, \
     search, save_json, save_csv
 
-log_directory = Path(__file__).resolve().parent / 'logs'
-log_directory.mkdir(parents=True, exist_ok=True)  # Ensure directory exists
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s - %(levelname)s - %(message)s',
-                    handlers=[
-                        logging.FileHandler(log_directory / 'task_1.log'),
-                        logging.StreamHandler()
-                    ])
-logging.getLogger("httpx").setLevel(logging.WARNING)
-logging.info("Logging system initialized")
+
+def setup_logger():
+    log_directory = Path(__file__).resolve().parent / 'logs'
+    log_directory.mkdir(parents=True, exist_ok=True)
+
+    logger = logging.getLogger()
+    for handler in logger.handlers[:]:  # 删除所有现有的日志处理器
+        logger.removeHandler(handler)
+
+    logger.setLevel(logging.INFO)  # 允许INFO及以上级别的日志被处理
+
+    file_handler = logging.FileHandler(log_directory / 'task_1.log')
+    file_handler.setLevel(logging.INFO)
+    file_format = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    file_handler.setFormatter(file_format)
+    logger.addHandler(file_handler)
+
+    stream_handler = logging.StreamHandler()
+    stream_handler.setLevel(logging.INFO)
+    stream_handler.setFormatter(file_format)
+    logger.addHandler(stream_handler)
+
+    logging.getLogger("httpx").setLevel(logging.WARNING)
+
+    logging.info("Logging system initialized")
 
 
 def parse_arguments():
@@ -60,5 +75,6 @@ async def main(univ, question):
 
 
 if __name__ == '__main__':
+    setup_logger()
     univ, question = parse_arguments()
     asyncio.run(main(univ, question), debug=True)
